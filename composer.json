@@ -1,6 +1,10 @@
 {
-    "require": {
-        "php-curl-class/php-curl-class": "^7.2",
-        "paquettg/php-html-parser": "^1.7"
-    }
+  "name": "statonlab/web-crawler",
+  "description": "PHP CLI tool to discover broken links within a website",
+  "type": "project",
+  "license": "Apache 2.0",
+  "require": {
+    "php-curl-class/php-curl-class": "^7.2",
+    "paquettg/php-html-parser": "^1.7"
+  }
 }
