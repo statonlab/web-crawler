@@ -1,4 +1,4 @@
-### web-crawler
+## web-crawler
 This is a PHP CLI tool that can be utilized to find broken links in a website.
 
 ### Composer
