@@ -12,8 +12,9 @@ Installing this tool can be done in several ways.
 **Option 1: Git**
 
 The easiest is to clone form GitHub using the following command:
-
-```https://github.com/statonlab/web-crawler.git```
+```
+https://github.com/statonlab/web-crawler.git
+```
 
 **Option 2: Download**
 
@@ -21,8 +22,9 @@ You can download a copy from the [releases](https://github.com/statonlab/web-cra
 
 #### Step 2: Install Dependencies
 Run the following command within the directory to download dependencies.
-
-```composer install```
+```
+composer install
+```
 
 ### Usage
 Examples:
