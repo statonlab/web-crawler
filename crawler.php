@@ -297,8 +297,9 @@ class Crawler
         echo "Options:\n";
         echo "    --url, -u      URL to scan. Example: --url http://example.com\n";
         echo "    --once, -o     Scan only the provided URL instead of visiting pages recursively\n";
-        echo "    --exclude, -x  Exclude any urls in the specified path. Example: --exclude /feature/\n";
-        die();
+        echo "    --exclude, -x  Exclude any urls in the specified path. Example: --exclude /feature/. ";
+        echo "For multiple paths, separate them with commas. Example: /feature/,/chado/\n";
+        exit(0);
     }
 
     /**
