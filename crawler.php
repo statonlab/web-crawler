@@ -115,7 +115,7 @@ class Crawler
      *
      * @var null|string
      */
-    protected $exclude = null;
+    protected $exclude = [];
 
     /**
      * Crawler constructor.
@@ -190,7 +190,7 @@ class Crawler
                     break;
                 case 'x':
                 case 'exclude':
-                    $this->exclude = $option;
+                    $this->exclude = $option ? explode(',',$option) : [];
                     break;
             }
         }
@@ -285,12 +285,14 @@ class Crawler
      */
     protected function isExcluded($url)
     {
-        if ($this->exclude === null) {
+        if (empty($this->exclude)) {
             return false;
         }
 
-        if (strpos($url, $this->base_url.trim($this->exclude, '/')) !== false) {
-            return true;
+        foreach ($this->exclude as $exclude) {
+            if (strpos($url, $this->base_url.trim($exclude, '/')) !== false) {
+                return true;
+            }
         }
 
         return false;
