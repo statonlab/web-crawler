@@ -81,6 +81,10 @@ class Crawler
         'once',
         // Show help list
         'help',
+        // Found files output file path.
+        'output-files:',
+        // Found broken links file path
+        'output-broken:',
         // The url to start scanning from
         'url:',
         // Exclude a certain path
@@ -101,6 +105,10 @@ class Crawler
         'u:',
         // exclude
         'x:',
+        // output-files
+        'f:',
+        // output-broken
+        'b:',
     ];
 
     /**
@@ -118,6 +126,20 @@ class Crawler
     protected $exclude = [];
 
     /**
+     * Found File Paths.
+     *
+     * @var array
+     */
+    protected $files = [];
+
+    /**
+     * Broken and Files output paths.
+     *
+     * @var array
+     */
+    protected $output = ['', ''];
+
+    /**
      * Crawler constructor.
      *
      * @return void
@@ -129,6 +151,28 @@ class Crawler
         $this->parseOptions();
         $this->start();
         $this->results();
+        $this->printToFiles();
+    }
+
+    /**
+     * Output all found files and broken links to flat files.
+     */
+    public function printToFiles()
+    {
+
+        $f1 = $this->output[0] !== '' ? $this->output[0] : 'found_files.txt';
+        $o = fopen($f1, 'w');
+        foreach ($this->files as $file) {
+            fwrite($o, "$file\n");
+        }
+        fclose($o);
+
+        $f2 = $this->output[1] !== '' ? $this->output[1] : 'broken_links.txt';
+        $o = fopen($f2, 'w');
+        foreach ($this->broken as $url => $link) {
+            fwrite($o, "$url\n");
+        }
+        fclose($o);
     }
 
     /**
@@ -184,13 +228,22 @@ class Crawler
                 case 'once':
                 case 'o':
                     $this->recursive = false;
+                    break;
+                case 'output-files':
+                case 'f':
+                    $this->output[0] = $option;
+                    break;
+                case 'output-broken':
+                case 'b':
+                    $this->output[1] = $option;
+                    break;
                 case 'help':
                 case 'h':
                     $this->printHelp();
                     break;
                 case 'x':
                 case 'exclude':
-                    $this->exclude = $option ? explode(',',$option) : [];
+                    $this->exclude = $option ? explode(',', $option) : [];
                     break;
             }
         }
@@ -414,6 +467,8 @@ class Crawler
         if (strpos($this->http->responseHeaders['content-type'], 'text/html') !== false) {
             $this->http->get($url);
             $this->scan($url, $this->http->response);
+        } else {
+            $this->files[] = $url;
         }
     }
 

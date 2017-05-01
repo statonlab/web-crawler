@@ -2,3 +2,5 @@
 .DS_Store
 
 vendor/
+found_files.txt
+broken_links.txt
