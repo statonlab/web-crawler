@@ -140,6 +140,34 @@ class Crawler
     protected $output = ['', ''];
 
     /**
+     * File extensions to match.
+     *
+     * @var array
+     */
+    protected $file_extensions = [
+        'ace',
+        'scafSeq',
+        'fasta',
+        'fastaq',
+        'gff',
+        'gff3',
+        'obo',
+        'tsv',
+        'xls',
+        'pdf',
+        'jpg',
+        'jpeg',
+        'png',
+        'bmp',
+        'gif',
+        'tiff',
+        'functional_annotation',
+        'log',
+        'zip',
+        'rar'
+    ];
+
+    /**
      * Crawler constructor.
      *
      * @return void
@@ -492,6 +520,12 @@ class Crawler
                 'status' => $status,
                 'found_at' => isset($this->providers[$url]) ? $this->providers[$url] : [],
             ];
+        }
+
+        //$extensions = implode('|', $this->file_extensions);
+
+        if (preg_match("/^.*\.([a-zA-Z_0-9])$/i", $url)) {
+            $this->files[] = $url;
         }
     }
 }
