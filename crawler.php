@@ -81,7 +81,7 @@ class Crawler
         'once',
         // Show help list
         'help',
-        // Found files output file path.
+        // Found files output file path
         'output-files:',
         // Found broken links file path
         'output-broken:',
@@ -159,7 +159,6 @@ class Crawler
      */
     public function printToFiles()
     {
-
         $f1 = $this->output[0] !== '' ? $this->output[0] : 'found_files.txt';
         $o = fopen($f1, 'w');
         foreach ($this->files as $file) {
