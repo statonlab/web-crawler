@@ -32,6 +32,7 @@ class sys_crawler
      */
     protected $options = [
         'path:',
+        'help',
     ];
 
     /**
@@ -41,6 +42,7 @@ class sys_crawler
      */
     protected $short_options = [
         'p:',
+        'h',
     ];
 
     /**
@@ -114,6 +116,10 @@ class sys_crawler
                 case 'p':
                     $this->base_path = $option;
                     break;
+                case 'help':
+                case 'h':
+                    $this->printHelp();
+                    break;
             }
         }
 
@@ -138,6 +144,23 @@ class sys_crawler
         $path = parse_url($url, PHP_URL_PATH);
 
         return rtrim($this->base_path, '/').'/'.$path;
+    }
+
+    protected function printHelp()
+    {
+        echo "System Crawler Help\n";
+        echo "==============================\n\n";
+        echo "This tools allows you to check if files within a directory are\nbeing used by comparing ";
+        echo "the content of the given directory to\na given list of URLs. \n\n\n";
+        echo "Usage Example\n";
+        echo "==============================\n\n";
+        echo "php sys_crawler.php -p /var/www/html/ < list_of_urls.txt\n\n\n";
+        echo "Available Options\n";
+        echo "==============================\n\n";
+        echo "  --path, -p  The path for the base directory. Normally, this would be the publicly accessible folder for your site.\n";
+        echo "  --help, -h  Prints the this help message.\n";
+
+        exit(0);
     }
 }
 
