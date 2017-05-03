@@ -89,6 +89,8 @@ class Crawler
         'url:',
         // Exclude a certain path
         'exclude:',
+
+        'report-file:',
     ];
 
     /**
@@ -109,6 +111,8 @@ class Crawler
         'f:',
         // output-broken
         'b:',
+        // report-file,
+        'r:',
     ];
 
     /**
@@ -137,35 +141,7 @@ class Crawler
      *
      * @var array
      */
-    protected $output = ['', ''];
-
-    /**
-     * File extensions to match.
-     *
-     * @var array
-     */
-    protected $file_extensions = [
-        'ace',
-        'scafSeq',
-        'fasta',
-        'fastaq',
-        'gff',
-        'gff3',
-        'obo',
-        'tsv',
-        'xls',
-        'pdf',
-        'jpg',
-        'jpeg',
-        'png',
-        'bmp',
-        'gif',
-        'tiff',
-        'functional_annotation',
-        'log',
-        'zip',
-        'rar',
-    ];
+    protected $output = ['', '', ''];
 
     /**
      * Crawler constructor.
@@ -209,30 +185,37 @@ class Crawler
      */
     public function results()
     {
-        echo "Scan Completed\n";
-        echo "--------------\n";
-        echo "Number of scanned links: {$this->scanned}\n";
-        echo "Number of successful links: {$this->successful}\n";
-        echo "Number of broken links: {$this->erred}\n";
-        echo "--------------------------------------\n";
+        if($this->output[2] === '') {
+            $o = STDIN;
+        } else {
+            $o = fopen($this->output[2], 'w');
+        }
+        
+        fwrite($o, "Scan Completed\n");
+        fwrite($o, "--------------\n");
+        fwrite($o, "Number of scanned links: {$this->scanned}\n");
+        fwrite($o, "Number of successful links: {$this->successful}\n");
+        fwrite($o, "Number of broken links: {$this->erred}\n");
+        fwrite($o, "--------------------------------------\n");
 
         if ($this->erred > 0) {
-            echo "Broken Links:\n";
-            echo "-------------\n";
+            fwrite($o, "Broken Links:\n");
+            fwrite($o, "-------------\n");
         }
 
         foreach ($this->broken as $url => $link) {
-            echo "$url\n";
-            echo "Status: {$link['status']}\n";
-            echo "Appeared in {$link['count']} pages\n";
-            echo "Can be found in the following pages:\n";
+            fwrite($o, "$url\n");
+            fwrite($o, "Status: {$link['status']}\n");
+            fwrite($o, "Appeared in {$link['count']} pages\n");
+            fwrite($o, "Can be found in the following pages:\n");
             foreach ($link['found_at'] as $found_url) {
-                echo "{$found_url}\n";
+                fwrite($o, "{$found_url}\n");
             }
-            echo str_pad('', strlen($url), '-')."\n";
+            fwrite($o, str_pad('', strlen($url), '-')."\n");
         }
 
-        echo "END REPORT\n";
+        fwrite($o, "END REPORT\n");
+        fclose($o);
     }
 
     /**
@@ -271,6 +254,10 @@ class Crawler
                 case 'x':
                 case 'exclude':
                     $this->exclude = $option ? explode(',', $option) : [];
+                    break;
+                case 'report-file':
+                case 'r':
+                    $this->output[2] = $option;
                     break;
             }
         }
@@ -338,24 +325,25 @@ class Crawler
     {
         while (! empty($this->links)) {
             $link = array_shift($this->links);
+
+            if (in_array($link, $this->visited)) {
+                continue;
+            }
+
             $parsedLink = $link;
             if (strlen($parsedLink) > 50) {
                 $parsedLink = substr($link, 0, 50).'...';
             }
 
-            if(in_array($link, $this->visited)) {
-                continue;
-            }
-
-            echo "\e[K\r";
+            echo "\033[K\r";
             echo "Scanning: $parsedLink\n";
             $this->getContent($link);
             $size = count($this->links);
-            echo "\e[k\r";
+            echo "\033[k\r";
             echo "Scanned: $this->scanned links\n";
-            echo "\e[k\r";
+            echo "\033[k\r";
             echo "Remaining links: $size\n";
-            echo "\e[k\r";
+            echo "\033[k\r";
             echo "Found {$this->erred} broken links so far\n";
             echo "\033[4A\r";
         }
@@ -375,7 +363,7 @@ class Crawler
         }
 
         foreach ($this->exclude as $exclude) {
-            if (strpos($url, $this->base_url.trim($exclude, '/')) !== false) {
+            if (strpos($url, $exclude) !== false) {
                 return true;
             }
         }
@@ -533,8 +521,6 @@ class Crawler
                 'found_at' => isset($this->providers[$url]) ? $this->providers[$url] : [],
             ];
         }
-
-        //$extensions = implode('|', $this->file_extensions);
 
         if (preg_match("/^.*\.([a-zA-Z_0-9])$/i", $url)) {
             $this->files[] = $url;
