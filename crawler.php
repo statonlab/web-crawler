@@ -164,7 +164,7 @@ class Crawler
         'functional_annotation',
         'log',
         'zip',
-        'rar'
+        'rar',
     ];
 
     /**
@@ -343,6 +343,10 @@ class Crawler
                 $parsedLink = substr($link, 0, 50).'...';
             }
 
+            if(in_array($link, $this->visited)) {
+                continue;
+            }
+
             echo "\e[K\r";
             echo "Scanning: $parsedLink\n";
             $this->getContent($link);
@@ -389,28 +393,36 @@ class Crawler
      */
     protected function scan($url, $content)
     {
-        $dom = new Dom();
-        $dom->load($content);
-        $body = $dom->find('body');
-
-        // Process a tags
-        foreach ($body->find('a') as $link) {
-            $href = $link->href;
-
-            if ($href = $this->parseLink($href, $url)) {
-                $this->links[] = $href;
-                $this->providers[$href][] = $url;
-            }
+        if (! $content) {
+            return;
         }
 
-        // Process img tags.
-        foreach ($body->find('img') as $link) {
-            $href = $link->src;
+        try {
+            $dom = new Dom();
+            $dom->load($content);
+            $body = $dom->find('body');
 
-            if ($href = $this->parseLink($href, $url)) {
-                $this->links[] = $href;
-                $this->providers[$href][] = $url;
+            // Process a tags
+            foreach ($body->find('a') as $link) {
+                $href = $link->href;
+
+                if ($uri = $this->parseLink($href, $url)) {
+                    $this->links[] = $uri;
+                    $this->providers[$uri][] = $url;
+                }
             }
+
+            // Process img tags.
+            foreach ($body->find('img') as $link) {
+                $href = $link->src;
+
+                if ($uri = $this->parseLink($href, $url)) {
+                    $this->links[] = $uri;
+                    $this->providers[$uri][] = $url;
+                }
+            }
+        } catch (\Exception $e) {
+            fwrite(STDERR, $e->getMessage());
         }
     }
 
@@ -421,7 +433,7 @@ class Crawler
      */
     protected function parseLink($link, $parent_link)
     {
-        if (! $link || $link === '/' || $link[0] === '#' || $link === 'javascript:;' || $link[0] !== '/') {
+        if (! $link || $link === '/' || $link[0] === '#' || $link === 'javascript:;') {
             return false;
         }
 
@@ -440,7 +452,7 @@ class Crawler
             $link = $this->base_url.ltrim($link, '/');
         }
 
-        if (! $this->isExcluded($link) && ! in_array($link, $this->visited) && ! in_array($link, $this->links)) {
+        if (! $this->isExcluded($link) && ! in_array($link, $this->visited)) {
             return $link;
         }
 
