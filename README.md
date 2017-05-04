@@ -52,7 +52,7 @@ php sys_crawler.php --path /var/www/html --in sites/default/ < found_files.txt
 # Help message
 php sys_crawler.php --help
 ```
-- **exists.php**: Given a set of urls and the public path in the filesystem, this script will print a list of files that do not exists in the system. Example usage below:
+- **exists.php**: Given a set of urls and the public path in the filesystem, this script will print a list of files that **DO NOT** exists in the system. Example usage below:
 ```shell
 # Scan /var/www/html for files listed in found_files.txt
 php exists.php --input found_files.txt --path /var/www/html/
