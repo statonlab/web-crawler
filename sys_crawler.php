@@ -84,7 +84,7 @@ class sys_crawler
         echo "List of unused files:\n";
         $unused = array_diff($this->files, $this->urls);
         foreach ($unused as $item) {
-            if ($this->in !== null && strpos($item, $this->in)) {
+            if ($this->in !== null && strpos($item, $this->in) === false) {
                 continue;
             }
 
@@ -165,15 +165,16 @@ class sys_crawler
     protected function printHelp()
     {
         echo "System Crawler Help\n";
-        echo "==============================\n\n";
+
         echo "This tools allows you to check if files within a directory are\nbeing used by comparing ";
-        echo "the content of the given directory to\na given list of URLs. \n\n\n";
+        echo "the content of the given directory to\na given list of URLs. \n\n";
+
         echo "Usage Example\n";
-        echo "==============================\n\n";
-        echo "php sys_crawler.php -p /var/www/html/ < list_of_urls.txt\n\n\n";
+        echo "php sys_crawler.php -p /var/www/html/ < list_of_urls.txt\n\n";
+
         echo "Available Options\n";
-        echo "==============================\n\n";
         echo "  --path, -p  The path for the base directory. Normally, this would be the publicly accessible folder for your site.\n";
+        echo "  --in, -i    Optional sub-directory to return results from.\n";
         echo "  --help, -h  Prints the this help message.\n";
 
         exit(0);
