@@ -325,10 +325,7 @@ class Crawler
     {
         while (! empty($this->links)) {
             $link = array_shift($this->links);
-
-            if (in_array($link, $this->visited)) {
-                continue;
-            }
+            $size = count($this->links);
 
             $parsedLink = $link;
             if (strlen($parsedLink) > 50) {
@@ -337,8 +334,9 @@ class Crawler
 
             echo "\033[K\r";
             echo "Scanning: $parsedLink\n";
-            $this->getContent($link);
-            $size = count($this->links);
+            if (!in_array($link, $this->visited)) {
+                $this->getContent($link);
+            }
             echo "\033[k\r";
             echo "Scanned: $this->scanned links\n";
             echo "\033[k\r";

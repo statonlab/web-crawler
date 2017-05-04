@@ -33,6 +33,7 @@ class sys_crawler
     protected $options = [
         'path:',
         'help',
+        'in:',
     ];
 
     /**
@@ -43,7 +44,15 @@ class sys_crawler
     protected $short_options = [
         'p:',
         'h',
+        'i:',
     ];
+
+    /**
+     * Compare only to this directory.
+     *
+     * @var string
+     */
+    protected $in = null;
 
     /**
      * sys_crawler constructor.
@@ -71,10 +80,14 @@ class sys_crawler
         echo "Scanning the system starting at path $this->base_path\n";
         $this->scanSystem();
         echo "Done scanning the system.\n";
+
         echo "List of unused files:\n";
         $unused = array_diff($this->files, $this->urls);
-
         foreach ($unused as $item) {
+            if ($this->in !== null && strpos($item, $this->in)) {
+                continue;
+            }
+
             echo "$item\n";
         }
     }
@@ -120,6 +133,9 @@ class sys_crawler
                 case 'h':
                     $this->printHelp();
                     break;
+                case 'in':
+                case 'i':
+                    $this->in = $option;
             }
         }
 
