@@ -28,7 +28,7 @@ composer install
 
 ## Usage
 The tool consists of three parts:
-- *crawler.php:* crawls a given url and prints a report of broken links. It also provides a list of all files found in found_files.txt and a list of broken links in broken_links.txt. Example usage below: 
+- **crawler.php:** crawls a given url and prints a report of broken links. It also provides a list of all files found in found_files.txt and a list of broken links in broken_links.txt. Example usage below: 
 ```shell
 # Scan all links found on this page recursively including this page. 
 php crawler.php --url https://example.com
@@ -39,7 +39,7 @@ php crawler.php --url https://example.com --exclude /path/
 # Help and Options
 php crawler.php --help
 ```
-- *sys_crawler.php*: Given a list of urls, this script prints unused files that exist in the filesystem but not in the list of given urls. Example usage below:
+- **sys_crawler.php**: Given a list of urls, this script prints unused files that exist in the filesystem but not in the list of given urls. Example usage below:
 ```shell
 # Scan all files in /var/www/html and return unused files.
 php sys_crawler.php --path /var/www/html < found_files.txt
@@ -52,7 +52,7 @@ php sys_crawler.php --path /var/www/html --in sites/default/ < found_files.txt
 # Help message
 php sys_crawler.php --help
 ```
-- *exists.php*: Given a set of urls and the public path in the filesystem, this script will print a list of files that do not exists in the system. Example usage below:
+- **exists.php**: Given a set of urls and the public path in the filesystem, this script will print a list of files that do not exists in the system. Example usage below:
 ```shell
 # Scan /var/www/html for files listed in found_files.txt
 php exists.php --input found_files.txt --path /var/www/html/
