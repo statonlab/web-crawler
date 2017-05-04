@@ -74,7 +74,7 @@ class sys_crawler
                 fwrite(STDERR, "$url is an invalid URL.\n");
                 continue;
             }
-            
+
             $this->urls[] = $path;
         }
 
